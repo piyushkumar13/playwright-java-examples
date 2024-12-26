@@ -15,12 +15,16 @@ import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.TimeoutError;
 import com.microsoft.playwright.assertions.PlaywrightAssertions;
 import com.microsoft.playwright.options.AriaRole;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
 /**
- * All the page methods which is used to locate elements like getByText, getByAltText, locater(..) etc does not any auto waiting.
- * Whereas locator methods i.e click(), innerHTML() etc which performs some event operation adds auto-waiting where default timeout is 30 secs.
+ * All the page methods which is used to locate elements like getByText, getByAltText, locater(..) etc does not have any auto waiting and also these are lazy in nature.
+ * Means, unless we wont attach any locator method, it will not locate. There work is just to return locator object.
+ * Whereas locator methods i.e click(), innerHTML(), innerText(), textContent() etc which performs some event operation adds auto-waiting where default timeout is 30 secs.
  * It adds auto-waiting as per this : https://playwright.dev/java/docs/actionability
  * NOTE : not all locator methods adds waiting.
  *
@@ -32,6 +36,19 @@ import org.junit.jupiter.api.Test;
  */
 public class _7Locators {
 
+
+
+
+    /* ************************ Specialized Locator Methods *********************** */
+    /*
+        Page.getByRole() to locate by explicit and implicit accessibility attributes.
+        Page.getByText() to locate by text content.
+        Page.getByLabel() to locate a form control by associated label's text.
+        Page.getByPlaceholder() to locate an input by placeholder.
+        Page.getByAltText() to locate an element, usually image, by its text alternative.
+        Page.getByTitle() to locate an element by its title attribute.
+        Page.getByTestId() to locate an element based on its data-testid attribute (other attributes can be configured).
+     */
     @Test
     public void testGetByText() {
 
@@ -69,41 +86,11 @@ public class _7Locators {
 
         Locator mightyCraftHardware = page.getByText("MightyCraft Hardware");
 
-        String innerText = mightyCraftHardware.innerText(); // This method does not add wait.
+        String innerText = mightyCraftHardware.innerText();
         System.out.println("inner text" + innerText);
 
         /* All Playwright Assertions have default timout of 5 secs - it waits for this much amount of time to retry assertions. */
         PlaywrightAssertions.assertThat(mightyCraftHardware).isVisible();
-
-        browser.close();
-        playwright.close();
-    }
-
-
-    /* Following test is meant to test that operations(like click, innerHTML etc) perform on locators like getByText etc add waiting.
-     * Otherwise no waiting is added. Following test
-     * */
-    @Test
-    public void testGetByTextToTestTimeout() {
-
-        Playwright playwright = Playwright.create();
-        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
-        Page page = browser.newPage();
-
-        page.navigate("https://practicesoftwaretesting.com");
-
-        page.getByText("Bolt Cutters").click();
-
-        Locator mightyCraftHardware = page.getByText("MightyCraft Hardware......"); // this will not add any waiting.
-
-        String innerText = "Cant find inner text";
-        try {
-            innerText = mightyCraftHardware.innerText(); // this will not add waiting and wait tor find text="MightyCraft Hardware......". Default is 30 secs.
-        } catch (Exception e) {
-            e.printStackTrace();
-            assertThat(e).isInstanceOf(TimeoutError.class);
-        }
-        System.out.println("inner text" + innerText);
 
         browser.close();
         playwright.close();
@@ -139,42 +126,6 @@ public class _7Locators {
 
         /* getByTitle allows locating elements by their title attribute. */
         page.getByTitle("Practice Software Testing - Toolshop").click();
-
-        browser.close();
-        playwright.close();
-    }
-
-    @Test
-    public void testGetByLabel() {
-
-        Playwright playwright = Playwright.create();
-        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
-        Page page = browser.newPage();
-
-        page.navigate("https://practicesoftwaretesting.com/contact");
-
-        Locator firstName = page.getByLabel("First name");
-        firstName.fill("Piyush");
-
-        PlaywrightAssertions.assertThat(firstName).hasValue("Piyush");
-
-        browser.close();
-        playwright.close();
-    }
-
-    @Test
-    public void testGetByPlaceholder() {
-
-        Playwright playwright = Playwright.create();
-        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
-        Page page = browser.newPage();
-
-        page.navigate("https://practicesoftwaretesting.com/contact");
-
-        Locator firstName = page.getByPlaceholder("Your first name"); // getByPlaceholder does partial matching i.e matches substring.
-        firstName.fill("Piyush");
-
-        PlaywrightAssertions.assertThat(firstName).hasValue("Piyush");
 
         browser.close();
         playwright.close();
@@ -235,7 +186,7 @@ public class _7Locators {
         byTestId.fill("Pliers");
 
         String inputValue = byTestId.inputValue();
-        System.out.println("Entered value is : "+ inputValue);
+        System.out.println("Entered value is : " + inputValue);
 
         assertThat(inputValue).isEqualTo("Pliers");
 
@@ -244,7 +195,178 @@ public class _7Locators {
     }
 
     @Test
-    public void testLocatorFiltering(){
+    public void testGetByLabel() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://practicesoftwaretesting.com/contact");
+
+        Locator firstName = page.getByLabel("First name");
+        firstName.fill("Piyush");
+
+        PlaywrightAssertions.assertThat(firstName).hasValue("Piyush");
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testGetByPlaceholder() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://practicesoftwaretesting.com/contact");
+
+        Locator firstName = page.getByPlaceholder("Your first name"); // getByPlaceholder does partial matching i.e matches substring.
+        firstName.fill("Piyush");
+
+        PlaywrightAssertions.assertThat(firstName).hasValue("Piyush");
+
+        browser.close();
+        playwright.close();
+    }
+
+
+
+
+    /* ************************************* Testing auto-waiting of Locators ********************************** */
+
+    /* Following test is meant to test that operations(like click, innerHTML etc) perform on locators like getByText etc add waiting.
+     * Otherwise no waiting is added. Following test
+     * */
+    @Test
+    public void testGetByTextToTestTimeout() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://practicesoftwaretesting.com");
+
+        page.getByText("Bolt Cutters").click();
+
+        Locator mightyCraftHardware = page.getByText("MightyCraft Hardware......"); // this will not add any waiting.
+
+        String innerText = "Cant find inner text";
+        try {
+            innerText = mightyCraftHardware.innerText(); // this will add waiting and wait tor find text="MightyCraft Hardware......". Default is 30 secs.
+        } catch (Exception e) {
+            e.printStackTrace();
+            assertThat(e).isInstanceOf(TimeoutError.class);
+        }
+        System.out.println("inner text" + innerText);
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testGetByTextWaitingOnInnerTextOrTextContentMethod() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://practicesoftwaretesting.com");
+
+        Locator boltCuttersLocator = page.getByRole(
+            AriaRole.HEADING,
+            new Page.GetByRoleOptions().setName("Bolt Cutters").setLevel(5)
+        );
+
+//        String boltCutters = boltCuttersLocator.innerText();
+        String boltCutters = boltCuttersLocator.textContent();
+
+        System.out.println("The boltcuttuers text is : " + boltCutters);
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testInnerTextOrTextContentMethodHasWaitingTime() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://practicesoftwaretesting.com");
+
+        Locator boltCuttersLocator = page.getByRole(
+            AriaRole.HEADING,
+            new Page.GetByRoleOptions().setName("Not existing text").setLevel(5)
+        );
+
+        String boltCutters = null;
+        try {
+            boltCutters = boltCuttersLocator.innerText();
+//            boltCutters = boltCuttersLocator.textContent();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            assertThat(e).isInstanceOf(TimeoutError.class);
+        }
+
+        System.out.println("The boltcuttuers text is : " + boltCutters);
+
+        browser.close();
+        playwright.close();
+    }
+
+
+
+
+    /* ************************************* Form Elements ********************************** */
+    @Test
+    public void testFillForm() throws URISyntaxException {
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://practicesoftwaretesting.com/contact");
+
+        Locator firstName = page.getByLabel("First name");
+        Locator lastName = page.getByLabel("Last name");
+        Locator emailAddress = page.getByLabel("Email address");
+        Locator subject = page.getByLabel("Subject");
+        Locator message = page.getByLabel("Message *");
+        Locator attachment = page.getByLabel("Attachment");
+
+        firstName.fill("Piyush");
+        lastName.fill("Kumar");
+        emailAddress.fill("pi@gmail.com");
+        message.fill("Hello to the world of Playwright!!");
+        subject.selectOption("warranty");
+
+        Path fileToUpload = Paths.get(ClassLoader.getSystemResource("data/sample-data.txt").toURI());
+        page.setInputFiles("#attachment", fileToUpload);
+
+        PlaywrightAssertions.assertThat(firstName).hasValue("Piyush");
+        PlaywrightAssertions.assertThat(lastName).hasValue("Kumar");
+        PlaywrightAssertions.assertThat(emailAddress).hasValue("pi@gmail.com");
+        PlaywrightAssertions.assertThat(subject).hasValue("warranty");
+        PlaywrightAssertions.assertThat(message).hasValue("Hello to the world of Playwright!!");
+
+        String attachmentInputValue = attachment.inputValue();
+
+        System.out.println("Input value of attachment is : " + attachmentInputValue);
+
+        assertThat(attachmentInputValue).endsWith("sample-data.txt");
+
+        browser.close();
+        playwright.close();
+    }
+
+
+
+
+    /* ********************************** Filtering and Nested Locators ***************************** */
+    @Test
+    public void testLocatorFiltering() {
 
         Playwright playwright = Playwright.create();
         playwright.selectors().setTestIdAttribute("data-test");
@@ -273,13 +395,75 @@ public class _7Locators {
         playwright.close();
     }
 
+    @Test
+    public void testNestedLocators1() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://practicesoftwaretesting.com");
+
+        page.getByRole(AriaRole.MENUBAR, new Page.GetByRoleOptions().setName("Main menu"))
+            .getByRole(AriaRole.MENUITEM, new Locator.GetByRoleOptions().setName("Home"))
+            .click();
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testNestedLocators2() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://practicesoftwaretesting.com");
+
+        page.getByRole(AriaRole.MENUBAR, new Page.GetByRoleOptions().setName("Main menu"))
+            .getByText("Home")
+            .click();
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testNestedLocatorsWithFiltering() {
+
+        Playwright playwright = Playwright.create();
+        playwright.selectors().setTestIdAttribute("data-test");
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://practicesoftwaretesting.com");
+
+        page.waitForTimeout(2000); // either we add this wait or below line which adds implicit wait.
+//        page.getByTestId("product-name").first().innerText(); // or this line which adds implicit wait since when page is navigated it takes some time to load the products.
+
+        List<String> outOfStock = page.locator(".card")
+            .filter(new Locator.FilterOptions().setHas(page.getByText("Out of stock")))
+            .getByTestId("product-name")
+            .allInnerTexts();
+
+        System.out.println("Out of stock" + outOfStock);
+
+        browser.close();
+        playwright.close();
+    }
+
+
+
+
+    /* ***************************************** Locating Nth element ************************************ */
     /**
      * page.locator(".card").first().click()
      * page.locator(".card").last().click();
      * page.locator(".card").nth(2).click();
-     * */
+     */
     @Test
-    public void testGetNthElement(){
+    public void testGetNthElement() {
 
         Playwright playwright = Playwright.create();
         Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
@@ -289,9 +473,14 @@ public class _7Locators {
         Locator first = page.locator(".card").first();
         first.click();
 
+//        page.waitForTimeout(2000);
         PlaywrightAssertions.assertThat(page.getByText("ForgeFlex Tools")).isVisible();
 
-        String firstCard = first.innerText();
+        /* NOTE: if we don't add above wait statement or assertion isVisible(which adds implicitly 5 secs), then below fist.testContent() will not return anything.
+         * But why, since this locator method is having auto waiting with timeout of 30 secs. Reason is that page.locator(..) method is on .card css and first.textContent method will
+         * just wait for .card css to be loaded with its element, it will not wait for all the other elements within it to be loaded. So, when it tried fetching
+         * text it didnt find anything as text element was not loaded. If we had page.locator on text itself and then call textContent it would have worked. */
+        String firstCard = first.textContent();
         System.out.println("First card is : " + firstCard);
 
         browser.close();
@@ -300,4 +489,86 @@ public class _7Locators {
     }
 
 
+
+
+    /******************************************* CSS Selectors ******************************************* */
+    @Test
+    public void testGetByIdCssSelector() {
+
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://practicesoftwaretesting.com/contact");
+
+        Locator firstNameLocator = page.locator("#first_name");
+        firstNameLocator.fill("Piyush");
+
+        PlaywrightAssertions.assertThat(firstNameLocator).hasValue("Piyush");
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testGetByClassCssSelector() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://practicesoftwaretesting.com/contact");
+
+        Locator firstNameLocator = page.locator("#first_name");
+        firstNameLocator.fill("Piyush");
+
+        page.locator(".btnSubmit").click(); // get by class selector
+
+        /* Since allTextContents() method does not add auto waiting but still we will be able to get some alert msgs after clicking on submit button.
+         * Why ? Becoz here we are checking for class which appears as the client side validation which takes nano seconds of time. There is no backend
+         * operation happening which could take more time. However, it may happen you wont get all the alert msgs, the result will not be deterministic. So,
+         * In this case, its better to add explicit waiting. */
+        page.waitForTimeout(2000);
+        List<String> alertMsgs = page.locator(".alert").allTextContents();
+
+        assertThat(alertMsgs).isNotEmpty();
+
+        System.out.println("The alert msgs are " + alertMsgs);
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testGetByAttributeCssSelector() {
+
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://practicesoftwaretesting.com/contact");
+
+        Locator lastNameLocator = page.locator("[placeholder='Your last name *']");
+        lastNameLocator.fill("Kumar");
+
+        PlaywrightAssertions.assertThat(lastNameLocator).hasValue("Kumar");
+    }
+
+    @Test
+    public void testGetByElementAttributeCssSelector() {
+
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://practicesoftwaretesting.com/contact");
+
+        Locator lastNameLocator = page.locator("input[placeholder='Your last name *']");
+        lastNameLocator.fill("Kumar");
+
+        PlaywrightAssertions.assertThat(lastNameLocator).hasValue("Kumar");
+    }
 }

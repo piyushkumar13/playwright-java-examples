@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test;
 @UsePlaywright(_5BrowserConfigWithUsePlaywrightAnnotation.CustomBrowserOptions.class)
 public class _5BrowserConfigWithUsePlaywrightAnnotation {
 
-
     public static class CustomBrowserOptions implements OptionsFactory {
 
         @Override
@@ -36,11 +35,11 @@ public class _5BrowserConfigWithUsePlaywrightAnnotation {
                 new BrowserType.LaunchOptions()
                     .setHeadless(false)
                     .setArgs(List.of("--no-sandbox", "--disable-extensions", "--disable-gpu"))
-            );
+            ).setTestIdAttribute("data-test");
         }
     }
 
-
+    /* We can also inject Playwright, Browser, BrowserContext object in the test methods as well. */
     @Test
     public void testBasicPlaywrightSetupAndSiteTitle(Page page) {
 
