@@ -20,7 +20,13 @@ java {
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation(group="com.microsoft.playwright", name="playwright", version="1.49.0")
+    testImplementation(
+        group = "com.microsoft.playwright",
+        name = "playwright",
+        version = "1.48.0"
+    )
+
+    testImplementation("org.assertj:assertj-core:3.27.0")
 }
 
 tasks.test {
