@@ -37,8 +37,6 @@ import org.junit.jupiter.api.Test;
 public class _7Locators {
 
 
-
-
     /* ************************ Specialized Locator Methods *********************** */
     /*
         Page.getByRole() to locate by explicit and implicit accessibility attributes.
@@ -233,6 +231,7 @@ public class _7Locators {
 
 
 
+
     /* ************************************* Testing auto-waiting of Locators ********************************** */
 
     /* Following test is meant to test that operations(like click, innerHTML etc) perform on locators like getByText etc add waiting.
@@ -318,8 +317,6 @@ public class _7Locators {
     }
 
 
-
-
     /* ************************************* Form Elements ********************************** */
     @Test
     public void testFillForm() throws URISyntaxException {
@@ -360,8 +357,6 @@ public class _7Locators {
         browser.close();
         playwright.close();
     }
-
-
 
 
     /* ********************************** Filtering and Nested Locators ***************************** */
@@ -456,7 +451,9 @@ public class _7Locators {
 
 
 
+
     /* ***************************************** Locating Nth element ************************************ */
+
     /**
      * page.locator(".card").first().click()
      * page.locator(".card").last().click();
@@ -489,9 +486,7 @@ public class _7Locators {
     }
 
 
-
-
-    /******************************************* CSS Selectors ******************************************* */
+    /* ****************************************** CSS Selectors ******************************************* */
     @Test
     public void testGetByIdCssSelector() {
 
@@ -554,6 +549,9 @@ public class _7Locators {
         lastNameLocator.fill("Kumar");
 
         PlaywrightAssertions.assertThat(lastNameLocator).hasValue("Kumar");
+
+        browser.close();
+        playwright.close();
     }
 
     @Test
@@ -570,5 +568,375 @@ public class _7Locators {
         lastNameLocator.fill("Kumar");
 
         PlaywrightAssertions.assertThat(lastNameLocator).hasValue("Kumar");
+
+        browser.close();
+        playwright.close();
     }
+
+    /* =========== Multiple Element Selector ============= */
+    @Test
+    public void testMultipleElementCssSelector() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://www.orangehrm.com/en/contact-sales");
+
+        Locator countLocator = page.locator("select#Form_getForm_Country option");
+        int count = countLocator.count();
+
+        System.out.println("The count is : " + count);
+
+        for (int i = 0; i < count; i++) {
+            String country = countLocator.nth(i).textContent();
+            System.out.println(country);
+        }
+
+//        OR
+
+        System.out.println("========== All countries are ============");
+        List<String> countries = countLocator.allTextContents();
+        countries.forEach(System.out::println);
+
+        browser.close();
+        playwright.close();
+    }
+
+    /* =========== Text Selector ============= */
+    @Test
+    public void testTextCssSelector1() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://www.orangehrm.com/en/30-day-free-trial");
+
+        String contactSales1 = page.locator("text='Contact Sales'").first().textContent();
+        String contactSales2 = page.locator("'Contact Sales'").first().textContent(); // we can also use without using text=
+
+        System.out.println("The text content1 is : " + contactSales1);
+        System.out.println("The text content2 is : " + contactSales2);
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testTextCssSelector2() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://demo-opencart.com/index.php?route=account/login&language=en-gb");
+
+        String newCustomerTxt1 = page.locator("h2:has-text('New Customer')").textContent();
+        String newCustomerTxt2 = page.locator("div.rounded h2:has-text('New Customer')").textContent();
+
+        System.out.println("The new customer txt1 is : " + newCustomerTxt1);
+        System.out.println("The new customer txt2 is : " + newCustomerTxt2);
+
+        browser.close();
+        playwright.close();
+    }
+
+    /* =========== Visible ELement Selector ============= */
+    @Test
+    public void testVisibleElement() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://www.amazon.in");
+
+        Locator visibleLinks = page.locator("a:visible"); // :visible is the pseudo class
+        String newCustomerTxt1 = visibleLinks.first().textContent();
+
+        Locator visibleLinksWithVisibleFilter = page.locator("a >> visible=true");  // >> visible=true is a visible filter
+        String newCustomerTxt2 = visibleLinksWithVisibleFilter.first().textContent();
+
+        System.out.println("The new customer txt1 is : " + newCustomerTxt1);
+        System.out.println("The new customer txt2 is : " + newCustomerTxt2);
+
+        int linksCount1 = visibleLinks.count();
+        int linksCount2 = visibleLinksWithVisibleFilter.count();
+
+        System.out.println("LinksCount1 : " + linksCount1);
+        System.out.println("LinksCount2 : " + linksCount2);
+
+        browser.close();
+        playwright.close();
+    }
+
+    /* ================= Element that contain other elements ============= */
+    @Test
+    public void testElementContainingOtherElements1() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://www.orangehrm.com/en/30-day-free-trial");
+
+        List<String> countries = page.locator("select#Form_getForm_Country:has(option[value='India'])").allTextContents(); // it will return select tag that contains option element which has one of the value as India.
+
+        countries.forEach(System.out::println);
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testElementContainingOtherElements2() {
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://www.amazon.in");
+
+        List<String> strings = page.locator("div.navFooterLinkCol:has(a[href='https://amazon.jobs'])").allInnerTexts();
+
+        strings.forEach(System.out::println);
+
+        browser.close();
+        playwright.close();
+    }
+
+    /* ================= Comma Seperated Selector ============= */
+    @Test
+    public void testCommaSeperatedCssSelector() {
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://academy.naveenautomationlabs.com/");
+
+        page.locator("a:has-text('Login'), a:has-text('login')").click(); // comma means OR
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testCommaSeperatedCssSelectorGetMultipleElements() {
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://academy.naveenautomationlabs.com/");
+
+        List<String> strings = page.locator("a:has-text('Login'), a:has-text('login'), a:has-text('webinars')").allInnerTexts();
+        strings.forEach(System.out::println);
+
+        browser.close();
+        playwright.close();
+    }
+
+    /* ================= Relative Selector  ============= */
+    /* https://playwright.dev/java/docs/other-locators#css-matching-elements-based-on-layout */
+
+    @Test
+    public void testRelativeCssSelector() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://selectorshub.com/xpath-practice-page/");
+
+        page.locator("input[type='checkbox']:left-of(:text('Joe.Root'))").first().click(); // selecting first since there are lots of checkboxes left of Joe.Root
+        String rightTxt = page.locator("td:right-of(:text('Joe.Root'))").first().textContent();
+        String aboveTxt = page.locator("a:above(:text('Joe.Root'))").first().textContent();
+        String belowTxt = page.locator("a:below(:text('Joe.Root'))").first().textContent();
+        String nearTxt = page.locator("td:near(:text('Joe.Root'))").first().textContent();
+        String nearTxt200 = page.locator("td:near(:text('Joe.Root'), 200)").last().textContent(); // Within 200 px
+
+        System.out.println("rightTxt : " + rightTxt);
+        System.out.println("aboveTxt : " + aboveTxt);
+        System.out.println("belowTxt : " + belowTxt);
+        System.out.println("nearTxt : " + nearTxt);
+        System.out.println("nearTxt200 : " + nearTxt200);
+
+
+        browser.close();
+        playwright.close();
+    }
+
+    /* ================= Nth CSS Selector  ============= */
+    /* https://playwright.dev/java/docs/other-locators#n-th-element-locator */
+    @Test
+    public void testNthCssSelector() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://www.bigbasket.com/");
+
+        String textContent = page.locator("div.px-2 li a >> nth=2").textContent();
+        System.out.println("textContent : " + textContent);
+
+
+        browser.close();
+        playwright.close();
+    }
+
+
+
+
+
+    /* ****************************************** React Locator ******************************************* */
+    @Test
+    public void testReactSelector() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://www.netflix.com/in/");
+
+        page.locator("_react=PressableButton[type='submit'][data-uia='nmhp-card-cta+hero_card']").click();
+
+        browser.close();
+        playwright.close();
+    }
+
+
+
+
+
+    /* ****************************************** XPath Locator ******************************************* */
+    @Test
+    public void testVisibleElementViaXPath() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://www.amazon.in");
+
+        Locator visibleLinks = page.locator("xpath=//img >> visible = true"); // >> visible=true is a visible filter
+//        Locator visibleLinks = page.locator("//img >> visible = true"); // we can also skip xpath=
+        String newCustomerTxt1 = visibleLinks.first().textContent();
+
+        System.out.println("The new customer txt1 is : " + newCustomerTxt1);
+
+        int linksCount1 = visibleLinks.count();
+
+        System.out.println("LinksCount1 : " + linksCount1);
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testXPathORing() {
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://academy.naveenautomationlabs.com/");
+
+        page.locator("//a[text() = 'Login'] | //a[text() = 'login']").click(); // it is same like comma seperated css selector. We can also do and using & operator.
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testXPathORingGetMultipleElements() {
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://academy.naveenautomationlabs.com/");
+
+        List<String> strings = page.locator("//a[text() = 'Webinars'] | //a[text() = 'Login']").allInnerTexts();
+        strings.forEach(System.out::println);
+
+        browser.close();
+        playwright.close();
+    }
+
+
+
+
+
+    /* ****************************************** Frame Handling ******************************************* */
+    @Test
+    public void testFrame() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://www.londonfreelance.org/courses/frames/index.html");
+
+        String frameContent1 = page.frameLocator("frame[name='main']").locator("h2").textContent();
+        System.out.println("The frame content1 is : " + frameContent1);
+
+        // We can also just use the frame name - most of the frames usually contain frame name
+
+        String frameContent2 = page.frame("main").locator("h2").textContent();
+        System.out.println("The frame content2 is : " + frameContent2);
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testIFrame() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://www.formsite.com/templates/registration-form-templates/vehicle-registration-form");
+
+
+        page.locator("img[title='Vehicle-Registration-Forms-and-Examples']").click();
+
+        page.frameLocator("//iframe[contains(@id, 'frame-one')]")
+            .locator("#RESULT_TextField-1").fill("Hello");
+
+        browser.close();
+        playwright.close();
+    }
+
+
+
+
+
+    /* ****************************************** Shadow DOM Handling ******************************************* */
+
+    /* Following testcase is for hierarchy:  Page -> DOM -> Shadow DOM -> Element
+     * In such cases when we have shadow dom, we cannot locate it directly. First we need to find the root of the shadow root and then
+     * we can locate any element in the shadow root.
+     *
+     * If we have a case of hierarchy:  Page -> IFrame -> DOM -> Shadow DOM -> Element
+     * In such cases when we have shadow dom within iframe, we cannot locate it directly. First we need to find the iframe and then
+     * we can locate any element in the shadow root.
+     * Ex - page.frameLocator("#id_of_iframe_or_any_css_selector").locator("root_of_shadow ccs_locator_for_element").fill("something");
+     *
+     *
+     * NOTE : Make sure that shadow root is open. If it is closed, then it cannot be located thereby cannot be automated.
+     * */
+    @Test
+    public void testShadowDom() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://books-pwakit.appspot.com");
+
+        page.locator("book-app[apptitle='BOOKS'] #input").fill("harry potter"); // here book-app[apptitle='BOOKS'] locates root of shadow root and #input is within shadow root.
+
+        browser.close();
+        playwright.close();
+    }
+
 }
