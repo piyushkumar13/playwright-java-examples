@@ -793,7 +793,24 @@ public class _7Locators {
         playwright.close();
     }
 
+    /* ================= Nth CSS Selector  ============= */
 
+    /* https://www.geeksforgeeks.org/css-scope-pseudo-class */
+    @Test
+    public void testScopeSelector() {
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://datatables.net/extensions/fixedcolumns/examples/integration/select-checkbox.html");
+
+        Locator tableRows = page.locator("table#example tr");
+        tableRows.locator(":scope", new Locator.LocatorOptions().setHasText("Ashton"))
+            .locator(".dt-select-checkbox").click();
+
+        browser.close();
+        playwright.close();
+    }
 
 
 
@@ -818,6 +835,79 @@ public class _7Locators {
 
 
     /* ****************************************** XPath Locator ******************************************* */
+    /* Good video on XPath : https://youtu.be/3uktjWgKrtI?si=vXNuFe9n-gqBC1S1 */
+    @Test
+    public void testBasicXPath(){
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://www.amazon.in");
+
+        page.locator("//input[@id='twotabsearchtextbox']").fill("Macbook Pro"); // finds input with id = 'twotabsearchtextbox'
+//        page.locator("xpath=//input[@id='twotabsearchtextbox']").fill("Macbook Pro"); // we can also use xpath= as well. But not required.
+
+
+        System.out.println("==== Finding all text containing amazon =====");
+        List<String> allAmazonTexts = page.locator("//a[contains(text(), 'Amazon')]").allInnerTexts(); //Finds all text that contains 'Amazon'
+        allAmazonTexts.forEach(System.out::println);
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testXPathWithParentSiblingProperties(){
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://selectorshub.com/xpath-practice-page/");
+
+//        page.locator("//a[text()='Joe.Root']/parent::td/preceding-sibling::td/input").click();
+        page.locator("//a[text()='Joe.Root']/parent::td/preceding-sibling::td/input[@type='checkbox']").click();
+
+        page.waitForTimeout(2000);
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testXPathForGrandChildrenRelation(){
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://selectorshub.com/xpath-practice-page/");
+
+        List<Locator> allCheckboxes = page.locator("//table[@id='resultTable']//input").all();// NOTE : // with input thats becoz input is not direct child of table.
+
+        allCheckboxes.forEach(Locator::click);
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testXPathForGrandChildrenIndex(){
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://selectorshub.com/xpath-practice-page/");
+
+        page.locator("(//table[@id='resultTable']//input)[position()=4]").click();
+        page.locator("(//table[@id='resultTable']//input)[1]").click();
+        page.locator("(//table[@id='resultTable']//input)[last()]").click();
+
+        browser.close();
+        playwright.close();
+    }
+
     @Test
     public void testVisibleElementViaXPath() {
 
