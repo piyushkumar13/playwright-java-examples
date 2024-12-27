@@ -3,17 +3,12 @@
  *  All Rights Reserved Worldwide.
  */
 
-package com.piyush.playwright_examples;
+package com.piyush.playwright_examples.UI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.junit.UsePlaywright;
-import com.microsoft.playwright.options.AriaRole;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**

@@ -3,19 +3,22 @@
  *  All Rights Reserved Worldwide.
  */
 
-package com.piyush.playwright_examples;
+package com.piyush.playwright_examples.UI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Download;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.TimeoutError;
 import com.microsoft.playwright.assertions.PlaywrightAssertions;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.FilePayload;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -343,7 +346,7 @@ public class _7Locators {
         subject.selectOption("warranty");
 
         Path fileToUpload = Paths.get(ClassLoader.getSystemResource("data/sample-data.txt").toURI());
-        page.setInputFiles("#attachment", fileToUpload);
+        page.setInputFiles("#attachment", fileToUpload); // we can also pass array of Path in case of uploading multiple files.
 
         PlaywrightAssertions.assertThat(firstName).hasValue("Piyush");
         PlaywrightAssertions.assertThat(lastName).hasValue("Kumar");
@@ -361,6 +364,65 @@ public class _7Locators {
         playwright.close();
     }
 
+    @Test
+    public void testMultiFileUpload() throws URISyntaxException {
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://davidwalsh.name/demo/multiple-file-upload.php");
+
+        page.setInputFiles("#filesToUpload", new Path[] {
+            Paths.get(ClassLoader.getSystemResource("data/sample-data.txt").toURI()),
+            Paths.get(ClassLoader.getSystemResource("data/sample-data-json.json").toURI())
+        });
+
+        List<String> uploadedFile = page.locator("ul#fileList li").allTextContents();
+        System.out.println("UploadedFile : " + uploadedFile);
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testFileUploadWithFilePayload(){
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://davidwalsh.name/demo/multiple-file-upload.php");
+
+        page.setInputFiles("#filesToUpload", new FilePayload("my-file.txt", "text/plain", "This is my file text file".getBytes(StandardCharsets.UTF_8)));
+
+        List<String> uploadedFile = page.locator("ul#fileList li").allTextContents();
+        System.out.println("UploadedFile : " + uploadedFile);
+
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testDownloadFile(){
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page = browser.newPage();
+
+        page.navigate("https://chromedriver.storage.googleapis.com/index.html?path=2.0/");
+
+        Download download = page.waitForDownload(() -> {
+
+            page.click("a:text('chromedriver_mac32.zip')");
+        });
+
+        System.out.println("Downloaded url : " + download.url());
+        System.out.println("Download Page title : " + download.page().title());
+        System.out.println("Download Path url : " + download.path().toString());
+        download.saveAs(Paths.get("piyush_chrome-1.zip"));
+        System.out.println("Download suggested filename : " + download.suggestedFilename());
+
+        browser.close();
+        playwright.close();
+    }
 
 
 

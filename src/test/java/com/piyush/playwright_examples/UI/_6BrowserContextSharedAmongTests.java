@@ -3,37 +3,59 @@
  *  All Rights Reserved Worldwide.
  */
 
-package com.piyush.playwright_examples;
+package com.piyush.playwright_examples.UI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 /**
  * @author Piyush Kumar.
  * @since 25/12/24.
  */
-public class _2TestWithHooks {
+
+/**
+ *  When we share playwright, browser, browser context among all the testcases, testcase execution takes lesser time.
+ */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class _6BrowserContextSharedAmongTests {
 
     private Playwright playwright;
     private Browser browser;
+    private BrowserContext browserContext;
     private Page page;
 
-    @BeforeEach
-    public void setUp() {
+    @BeforeAll
+    public void oneTimeSetUp() {
+
+        System.out.println("Inside before all one time setup");
 
         playwright = Playwright.create();
         browser = playwright.chromium().launch();
-        page = browser.newPage(); // since newPage() by default creates a new browser context, it means each test will have a new browser context
+        browserContext = browser.newContext();
     }
 
-    @AfterEach
+    @BeforeEach
+    public void setUp(){
+        System.out.println("Inside before each setup");
+
+        page = browserContext.newPage();
+    }
+
+    @AfterAll
     public void teardown() {
+
+        System.out.println("Inside after all teardown");
+
+        browserContext.close();
         browser.close();
         playwright.close();
     }

@@ -3,7 +3,7 @@
  *  All Rights Reserved Worldwide.
  */
 
-package com.piyush.playwright_examples;
+package com.piyush.playwright_examples.UI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,7 +11,6 @@ import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
-import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 

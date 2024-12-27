@@ -3,27 +3,45 @@
  *  All Rights Reserved Worldwide.
  */
 
-package com.piyush.playwright_examples;
+package com.piyush.playwright_examples.UI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
  * @author Piyush Kumar.
  * @since 25/12/24.
  */
-public class _1BasicPlaywrightTest {
+public class _2TestWithHooks {
+
+    private Playwright playwright;
+    private Browser browser;
+    private Page page;
+
+    @BeforeEach
+    public void setUp() {
+
+        playwright = Playwright.create();
+        browser = playwright.chromium().launch();
+        page = browser.newPage(); // since newPage() by default creates a new browser context, it means each test will have a new browser context
+    }
+
+    @AfterEach
+    public void teardown() {
+        browser.close();
+        playwright.close();
+    }
+
 
     @Test
     public void testBasicPlaywrightSetupAndSiteTitle() {
 
-        Playwright playwright = Playwright.create();
-        Browser browser = playwright.chromium().launch();
-        Page page = browser.newPage(); // newPage() by default creates a new browser context
 
         page.navigate("https://practicesoftwaretesting.com");
 
@@ -31,17 +49,10 @@ public class _1BasicPlaywrightTest {
         System.out.println("title is : " + title);
 
         assertThat(title).isEqualTo("Practice Software Testing - Toolshop - v5.0");
-
-        browser.close();
-        playwright.close();
     }
 
     @Test
     public void testSearchByKeywordUsingTimeOut() {
-
-        Playwright playwright = Playwright.create();
-        Browser browser = playwright.chromium().launch();
-        Page page = browser.newPage();
 
         page.navigate("https://practicesoftwaretesting.com");
 
@@ -59,17 +70,10 @@ public class _1BasicPlaywrightTest {
 
         assertThat(cardsCount).isEqualTo(4);
 
-        browser.close();
-        playwright.close();
-
     }
 
     @Test
     public void testSearchByKeywordUsingWaitForResponseWithEmptyCallback() {
-
-        Playwright playwright = Playwright.create();
-        Browser browser = playwright.chromium().launch();
-        Page page = browser.newPage();
 
         page.navigate("https://practicesoftwaretesting.com");
 
@@ -89,17 +93,10 @@ public class _1BasicPlaywrightTest {
         System.out.println("The cards count is : " + cardsCount);
 
         assertThat(cardsCount).isEqualTo(4);
-
-        browser.close();
-        playwright.close();
     }
 
     @Test
     public void testSearchByKeywordUsingWaitForResponseUsingCallback() {
-
-        Playwright playwright = Playwright.create();
-        Browser browser = playwright.chromium().launch();
-        Page page = browser.newPage();
 
         page.navigate("https://practicesoftwaretesting.com");
 
@@ -117,16 +114,10 @@ public class _1BasicPlaywrightTest {
 
         assertThat(cardsCount).isEqualTo(4);
 
-        browser.close();
-        playwright.close();
     }
 
     @Test
     public void testSearchByKeywordUsingWaitForResponseWithoutTimeoutUsingCallback() {
-
-        Playwright playwright = Playwright.create();
-        Browser browser = playwright.chromium().launch();
-        Page page = browser.newPage();
 
         page.navigate("https://practicesoftwaretesting.com");
 
@@ -142,17 +133,10 @@ public class _1BasicPlaywrightTest {
         System.out.println("The cards count is : " + cardsCount);
 
         assertThat(cardsCount).isEqualTo(4);
-
-        browser.close();
-        playwright.close();
     }
 
     @Test
     public void testSearchByKeywordUsingWaitForResponseWithoutTimeoutUsingCallback2() {
-
-        Playwright playwright = Playwright.create();
-        Browser browser = playwright.chromium().launch();
-        Page page = browser.newPage();
 
         page.navigate("https://practicesoftwaretesting.com");
 
@@ -174,8 +158,5 @@ public class _1BasicPlaywrightTest {
         System.out.println("The cards count is : " + cardsCount);
 
         assertThat(cardsCount).isEqualTo(4);
-
-        browser.close();
-        playwright.close();
     }
 }

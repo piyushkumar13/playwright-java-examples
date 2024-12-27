@@ -3,68 +3,27 @@
  *  All Rights Reserved Worldwide.
  */
 
-package com.piyush.playwright_examples;
+package com.piyush.playwright_examples.UI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 /**
  * @author Piyush Kumar.
  * @since 25/12/24.
  */
-
-/**
- *  When we share playwright, browser, browser context among all the testcases, testcase execution takes lesser time.
- */
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class _6BrowserContextSharedAmongTests {
-
-    private Playwright playwright;
-    private Browser browser;
-    private BrowserContext browserContext;
-    private Page page;
-
-    @BeforeAll
-    public void oneTimeSetUp() {
-
-        System.out.println("Inside before all one time setup");
-
-        playwright = Playwright.create();
-        browser = playwright.chromium().launch();
-        browserContext = browser.newContext();
-    }
-
-    @BeforeEach
-    public void setUp(){
-        System.out.println("Inside before each setup");
-
-        page = browserContext.newPage();
-    }
-
-    @AfterAll
-    public void teardown() {
-
-        System.out.println("Inside after all teardown");
-
-        browserContext.close();
-        browser.close();
-        playwright.close();
-    }
-
+public class _1BasicPlaywrightTest {
 
     @Test
     public void testBasicPlaywrightSetupAndSiteTitle() {
 
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch();
+        Page page = browser.newPage(); // newPage() by default creates a new browser context
 
         page.navigate("https://practicesoftwaretesting.com");
 
@@ -72,10 +31,17 @@ public class _6BrowserContextSharedAmongTests {
         System.out.println("title is : " + title);
 
         assertThat(title).isEqualTo("Practice Software Testing - Toolshop - v5.0");
+
+        browser.close();
+        playwright.close();
     }
 
     @Test
     public void testSearchByKeywordUsingTimeOut() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch();
+        Page page = browser.newPage();
 
         page.navigate("https://practicesoftwaretesting.com");
 
@@ -93,10 +59,17 @@ public class _6BrowserContextSharedAmongTests {
 
         assertThat(cardsCount).isEqualTo(4);
 
+        browser.close();
+        playwright.close();
+
     }
 
     @Test
     public void testSearchByKeywordUsingWaitForResponseWithEmptyCallback() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch();
+        Page page = browser.newPage();
 
         page.navigate("https://practicesoftwaretesting.com");
 
@@ -116,10 +89,17 @@ public class _6BrowserContextSharedAmongTests {
         System.out.println("The cards count is : " + cardsCount);
 
         assertThat(cardsCount).isEqualTo(4);
+
+        browser.close();
+        playwright.close();
     }
 
     @Test
     public void testSearchByKeywordUsingWaitForResponseUsingCallback() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch();
+        Page page = browser.newPage();
 
         page.navigate("https://practicesoftwaretesting.com");
 
@@ -137,10 +117,16 @@ public class _6BrowserContextSharedAmongTests {
 
         assertThat(cardsCount).isEqualTo(4);
 
+        browser.close();
+        playwright.close();
     }
 
     @Test
     public void testSearchByKeywordUsingWaitForResponseWithoutTimeoutUsingCallback() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch();
+        Page page = browser.newPage();
 
         page.navigate("https://practicesoftwaretesting.com");
 
@@ -156,10 +142,17 @@ public class _6BrowserContextSharedAmongTests {
         System.out.println("The cards count is : " + cardsCount);
 
         assertThat(cardsCount).isEqualTo(4);
+
+        browser.close();
+        playwright.close();
     }
 
     @Test
     public void testSearchByKeywordUsingWaitForResponseWithoutTimeoutUsingCallback2() {
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch();
+        Page page = browser.newPage();
 
         page.navigate("https://practicesoftwaretesting.com");
 
@@ -181,5 +174,8 @@ public class _6BrowserContextSharedAmongTests {
         System.out.println("The cards count is : " + cardsCount);
 
         assertThat(cardsCount).isEqualTo(4);
+
+        browser.close();
+        playwright.close();
     }
 }
