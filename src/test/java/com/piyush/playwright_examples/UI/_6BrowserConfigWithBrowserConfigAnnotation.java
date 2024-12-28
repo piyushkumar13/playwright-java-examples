@@ -86,9 +86,16 @@ public class _6BrowserConfigWithBrowserConfigAnnotation {
 
     public static class DefaultBrowserConfig implements PlaywrightBrowserConfig {
 
+//        @Override
+//        public BrowserConfig getBrowserConfig() {
+//            return new BrowserConfig().chromium().launch();
+//        }
+
         @Override
         public BrowserConfig getBrowserConfig() {
-            return new BrowserConfig().chromium().launch();
+            return new BrowserConfig().chromium()
+                .enableTracing()
+                .launch();
         }
     }
 }
