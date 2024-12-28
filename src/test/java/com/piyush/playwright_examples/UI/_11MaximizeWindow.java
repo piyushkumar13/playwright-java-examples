@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
  * @author Piyush Kumar.
  * @since 27/12/24.
  */
-public class _10MaximizeWindow {
+public class _11MaximizeWindow {
 
 
     @Test

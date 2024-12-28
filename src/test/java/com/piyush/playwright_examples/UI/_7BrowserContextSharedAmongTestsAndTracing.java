@@ -11,10 +11,14 @@ import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.Tracing;
+import java.nio.file.Paths;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
 
 /**
@@ -24,9 +28,17 @@ import org.junit.jupiter.api.TestInstance;
 
 /**
  *  When we share playwright, browser, browser context among all the testcases, testcase execution takes lesser time.
+ *
+ *  On trace details can be found here : https://playwright.dev/java/docs/trace-viewer-intro
+ *
+ *  To see the trace, you can do following :
+ *
+ *  1. Go to https://trace.playwright.dev/ and drag and drop trace zip file
+ *  2. Or run this command from the project root directory mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="show-trace trace.zip"
+ *  3. Or run npx playwright show-trace {trace zip file}
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class _6BrowserContextSharedAmongTests {
+public class _7BrowserContextSharedAmongTestsAndTracing {
 
     private Playwright playwright;
     private Browser browser;
@@ -41,13 +53,27 @@ public class _6BrowserContextSharedAmongTests {
         playwright = Playwright.create();
         browser = playwright.chromium().launch();
         browserContext = browser.newContext();
+
     }
 
     @BeforeEach
     public void setUp(){
         System.out.println("Inside before each setup");
 
+        browserContext.tracing().start(new Tracing.StartOptions()
+            .setScreenshots(true)
+            .setSnapshots(true));
+
         page = browserContext.newPage();
+    }
+
+    @AfterEach
+    public void traceEach(TestInfo testInfo){
+
+        String testName = testInfo.getDisplayName().replace(" ", "-").toLowerCase();
+
+        browserContext.tracing().stop(new Tracing.StopOptions()
+            .setPath(Paths.get("trace-" + testName + ".zip")));
     }
 
     @AfterAll

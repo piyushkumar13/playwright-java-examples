@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
  * @author Piyush Kumar.
  * @since 27/12/24.
  */
-public class _8AutomaticLogin {
+public class _9AutomaticLogin {
 
     @Test
     public void testLoginToCreateCredJson(){

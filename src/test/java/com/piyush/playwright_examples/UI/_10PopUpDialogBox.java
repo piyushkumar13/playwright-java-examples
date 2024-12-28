@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
  * @author Piyush Kumar.
  * @since 27/12/24.
  */
-public class _9PopUpDialogBox {
+public class _10PopUpDialogBox {
 
 
     /* By default, Playwright handles the pop ups automatically. */

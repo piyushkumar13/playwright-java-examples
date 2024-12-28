@@ -84,4 +84,5 @@ public class _4PlaywrightBrowserConfig {
         browser.close();
         playwright.close();
     }
+
 }

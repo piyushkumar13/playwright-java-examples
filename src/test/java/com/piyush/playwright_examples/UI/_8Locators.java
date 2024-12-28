@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
  * @author Piyush Kumar.
  * @since 25/12/24.
  */
-public class _7Locators {
+public class _8Locators {
 
 
     /* ************************ Specialized Locator Methods *********************** */

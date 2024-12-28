@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
  * @author Piyush Kumar.
  * @since 27/12/24.
  */
-public class _12TabWindows {
+public class _13TabWindows {
 
     @Test
     public void testOpenPageInTab(){

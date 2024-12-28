@@ -8,7 +8,6 @@ package com.piyush.playwright_examples.UI;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
-import com.microsoft.playwright.Dialog;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import java.nio.file.Paths;
@@ -18,7 +17,7 @@ import org.junit.jupiter.api.Test;
  * @author Piyush Kumar.
  * @since 27/12/24.
  */
-public class _11RecordVideo {
+public class _12RecordVideo {
 
     @Test
     public void testRecordVideoOfOperationPerformed(){
