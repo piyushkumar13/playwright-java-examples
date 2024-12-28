@@ -27,6 +27,8 @@ dependencies {
     )
 
     testImplementation("org.assertj:assertj-core:3.27.0")
+    testImplementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
+    testImplementation("com.github.javafaker:javafaker:1.0.2")
 }
 
 tasks.test {

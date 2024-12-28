@@ -10,7 +10,7 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
-import java.nio.file.Paths;
+import com.microsoft.playwright.options.LoadState;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -34,8 +34,9 @@ public class _12TabWindows {
             page.click("img[alt='linkedin logo']");
         });
 
-        popup.waitForLoadState();
-        System.out.println("Pop up title" + popup.title());
+        popup.waitForLoadState(LoadState.DOMCONTENTLOADED);
+        System.out.println("Popup URL: " + popup.url());
+        System.out.println("Pop up title : " + popup.title()); // TODO : this is failing check why ? but when using  popup.waitForTimeout(2000); works
 
         browser.close();
         playwright.close();
